@@ -1,0 +1,12 @@
+{
+  "name": "jissa-sql-injection-deck",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Builds the SQL Injection 101 PowerPoint for the JISSA General Assembly",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "pptxgenjs": "^4.0.1"
+  }
+}

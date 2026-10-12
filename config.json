@@ -1,0 +1,15 @@
+{
+  "port": 8080,
+  "openBrowser": true,
+  "simulatedLatencyMs": 8,
+  "labAids": true,
+  "demoUser": {
+    "studentNumber": "2024151326",
+    "password": "MapuaMCL2026",
+    "fullName": "ISAIAH ANDREI DELA CRUZ",
+    "shortName": "ISAIAH ANDREI ...",
+    "email": "iadelacruz@student.mcl.edu.ph",
+    "role": "Student",
+    "program": "BS Information Technology"
+  }
+}

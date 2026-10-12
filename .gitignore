@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+slides/node_modules/
+
+# Runtime SQLite Database
+data/*.db
+data/*.db-wal
+data/*.db-shm
+
+# Operating System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

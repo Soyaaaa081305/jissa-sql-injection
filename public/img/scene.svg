@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Campus building backdrop">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#8fa3cd"/>
+      <stop offset="42%"  stop-color="#c0cbe3"/>
+      <stop offset="100%" stop-color="#eff2f9"/>
+    </linearGradient>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#fbfcfe"/>
+      <stop offset="100%" stop-color="#d9dfea"/>
+    </linearGradient>
+    <linearGradient id="band" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#eaeff7"/>
+    </linearGradient>
+    <linearGradient id="tower" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e6ebf3"/>
+    </linearGradient>
+    <linearGradient id="dark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#39404d"/>
+      <stop offset="100%" stop-color="#232933"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+
+  <!-- soft clouds -->
+  <g fill="#ffffff" opacity=".35">
+    <ellipse cx="330" cy="150" rx="210" ry="44"/>
+    <ellipse cx="1520" cy="96" rx="250" ry="38"/>
+    <ellipse cx="1060" cy="230" rx="180" ry="30"/>
+  </g>
+
+  <!-- diagonal roof line + white band -->
+  <polygon points="0,792 1920,404 1920,440 0,828" fill="#2f6fb0"/>
+  <polygon points="0,828 1920,440 1920,566 0,956" fill="url(#band)"/>
+  <polygon points="0,956 1920,566 1920,586 0,976" fill="#c8d1e0"/>
+
+  <!-- left wing (dark, louvered) -->
+  <polygon points="0,866 636,742 636,1080 0,1080" fill="url(#dark)"/>
+  <g stroke="#4a5261" stroke-width="7" opacity=".85">
+    <line x1="0" y1="912" x2="636" y2="798"/>
+    <line x1="0" y1="954" x2="636" y2="846"/>
+    <line x1="0" y1="996" x2="636" y2="894"/>
+    <line x1="0" y1="1038" x2="636" y2="942"/>
+  </g>
+
+  <!-- palm trees -->
+  <g fill="#1d5340">
+    <rect x="196" y="800" width="13" height="230" fill="#4b4136"/>
+    <path d="M202 806c-46-32-96-30-124-6 40-6 78 4 108 26z"/>
+    <path d="M202 806c46-32 96-30 124-6-40-6-78 4-108 26z"/>
+    <path d="M202 800c-16-46-56-66-96-64 34 14 62 38 78 74z"/>
+    <path d="M202 800c16-46 56-66 96-64-34 14-62 38-78 74z"/>
+    <path d="M202 794c-4-34 14-62 44-76-22 22-34 46-34 78z"/>
+
+    <rect x="470" y="828" width="11" height="210" fill="#4b4136"/>
+    <path d="M476 834c-40-28-84-26-108-6 34-6 68 4 94 22z"/>
+    <path d="M476 834c40-28 84-26 108-6-34-6-68 4-94 22z"/>
+    <path d="M476 828c-14-40-48-58-84-56 30 12 54 34 68 64z"/>
+    <path d="M476 828c14-40 48-58 84-56-30 12-54 34-68 64z"/>
+  </g>
+
+  <!-- main building block -->
+  <rect x="742" y="600" width="504" height="480" fill="url(#wall)"/>
+  <rect x="742" y="600" width="504" height="18" fill="#2f6fb0"/>
+  <g fill="#c3ccdb">
+    <rect x="770" y="666" width="86" height="66"/>
+    <rect x="880" y="666" width="86" height="66"/>
+    <rect x="1078" y="666" width="86" height="66"/>
+    <rect x="1188" y="666" width="30" height="66"/>
+    <rect x="770" y="786" width="86" height="66"/>
+    <rect x="1188" y="786" width="30" height="66"/>
+    <rect x="770" y="906" width="86" height="66"/>
+    <rect x="880" y="906" width="86" height="66"/>
+    <rect x="1078" y="906" width="86" height="66"/>
+    <rect x="1188" y="906" width="30" height="66"/>
+  </g>
+
+  <!-- raised centre tower -->
+  <rect x="946" y="524" width="286" height="556" fill="url(#tower)"/>
+  <rect x="946" y="524" width="286" height="16" fill="#2f6fb0"/>
+  <rect x="966" y="618" width="246" height="292" fill="#ffffff" stroke="#d5dbe6" stroke-width="4"/>
+
+  <!-- shield emblem -->
+  <g transform="translate(1089,756)">
+    <path d="M-84 6c6 52 44 84 84 100 40-16 78-48 84-100" fill="none" stroke="#e2231a" stroke-width="9" stroke-linecap="round"/>
+    <g fill="#e2231a">
+      <ellipse cx="-76" cy="24" rx="13" ry="7" transform="rotate(-32 -76 24)"/>
+      <ellipse cx="-64" cy="50" rx="13" ry="7" transform="rotate(-20 -64 50)"/>
+      <ellipse cx="-45" cy="72" rx="13" ry="7" transform="rotate(-8 -45 72)"/>
+      <ellipse cx="76" cy="24" rx="13" ry="7" transform="rotate(32 76 24)"/>
+      <ellipse cx="64" cy="50" rx="13" ry="7" transform="rotate(20 64 50)"/>
+      <ellipse cx="45" cy="72" rx="13" ry="7" transform="rotate(8 45 72)"/>
+    </g>
+    <path d="M0 -76 L62 -54 L62 6 C62 46 30 74 0 88 C-30 74 -62 46 -62 6 L-62 -54 Z"
+          fill="#ffffff" stroke="#1b3f7a" stroke-width="7"/>
+    <path d="M0 -58 L44 -42 L44 4 C44 34 20 56 0 66 C-20 56 -44 34 -44 4 L-44 -42 Z"
+          fill="#e2231a"/>
+    <path d="M-22 34 L-22 -24 L0 -6 L22 -24 L22 34" fill="none" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- ground -->
+  <rect y="1016" width="1920" height="64" fill="#c6ccd8"/>
+  <rect y="1016" width="1920" height="6" fill="#aeb6c5"/>
+</svg>

@@ -1,0 +1,466 @@
+/* ==========================================================================
+   SQL injection lab — floating control panel
+   Deliberately ordinary: light surfaces, one accent colour, monospace only
+   where actual SQL or payloads are shown. Nothing here blinks, pulses or
+   glows; every animation is a plain state change and honours reduced-motion.
+   ========================================================================== */
+
+:root {
+  --l-surface: #ffffff;
+  --l-sunken:  #f6f8fa;
+  --l-border:  #d0d7de;
+  --l-border-hi: #afb8c1;
+  --l-text:    #1f2328;
+  --l-text-2:  #57606a;
+  --l-text-3:  #818b98;
+  --l-accent:  #2563eb;
+  --l-accent-soft: #eff4ff;
+  --l-ok:      #1a7f37;
+  --l-ok-soft: #eaf6ee;
+  --l-bad:     #cf222e;
+  --l-bad-soft:#ffeef0;
+  --l-warn:    #9a6700;
+  --l-code:    #f6f8fa;
+  --l-shadow:  0 1px 2px rgba(31, 35, 40, .06), 0 12px 32px rgba(31, 35, 40, .16);
+  --mono: ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+  --ui: "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ------------------------------------------------------------- launcher -- */
+/* Docked bottom-left so it never covers the Username / Password fields. */
+.lab-fab {
+  position: fixed;
+  left: 22px;
+  bottom: 22px;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 18px;
+  border: 1px solid var(--l-border-hi);
+  border-radius: 8px;
+  background: var(--l-surface);
+  color: var(--l-text);
+  font: 600 13px/1 var(--ui);
+  cursor: pointer;
+  box-shadow: var(--l-shadow);
+  transition: background .15s, border-color .15s;
+}
+.lab-fab:hover { background: var(--l-sunken); border-color: var(--l-text-3); }
+.lab-fab:focus-visible { outline: 2px solid var(--l-accent); outline-offset: 2px; }
+
+.lab-fab-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--l-accent);
+  flex: none;
+}
+
+/* ---------------------------------------------------------------- panel -- */
+.lab {
+  position: fixed;
+  left: 22px;
+  bottom: 80px;
+  z-index: 70;
+  width: 468px;
+  max-width: calc(100vw - 32px);
+  /* A definite height (not just max-height) so the log gets the leftover
+     space instead of the panel collapsing to whatever the content needs. */
+  height: min(660px, calc(100vh - 116px));
+  display: flex;
+  flex-direction: column;
+  background: var(--l-surface);
+  border: 1px solid var(--l-border);
+  border-radius: 10px;
+  box-shadow: var(--l-shadow);
+  overflow-x: hidden;
+  /* Fallback for very short windows: if the fixed sections alone exceed the
+     height budget, the log collapses to zero and this keeps the footer
+     reachable instead of clipping it off. */
+  overflow-y: auto;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity .16s ease, transform .16s ease;
+}
+.lab.is-open { opacity: 1; transform: none; pointer-events: auto; }
+
+/* Every section except the log is a fixed-height block. Without this the
+   flex column squeezes them all when the panel hits its max-height, and text
+   from one section spills onto the next (the description overran the stats
+   row). The log is the only thing allowed to absorb height pressure. */
+.lab-head,
+.lab-ep,
+.lab-modes,
+.lab-desc,
+.lab-meter,
+.lab-out,
+.lab-foot { flex: none; }
+
+.lab-head {
+  position: relative;
+  padding: 13px 42px 11px 15px;
+  border-bottom: 1px solid var(--l-border);
+  background: var(--l-surface);
+}
+
+.lab-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 600 13px/1.3 var(--ui);
+  color: var(--l-text);
+}
+.lab-brand svg { width: 15px; height: 15px; color: var(--l-accent); flex: none; }
+.lab-brand em {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--l-text-3);
+}
+
+.lab-target {
+  margin-top: 5px;
+  font: 11.5px/1.45 var(--mono);
+  color: var(--l-text-2);
+  word-break: break-word;
+}
+.lab-target b { color: var(--l-text); font-weight: 600; }
+
+.lab-x {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--l-text-2);
+  cursor: pointer;
+}
+.lab-x:hover { background: var(--l-sunken); border-color: var(--l-border); }
+.lab-x:focus-visible { outline: 2px solid var(--l-accent); outline-offset: 1px; }
+.lab-x svg { width: 14px; height: 14px; }
+
+/* --------------------------------------------------- endpoint selector --- */
+/* The headline teaching control: fire the identical payload at both. */
+.lab-ep {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 15px;
+  border-bottom: 1px solid var(--l-border);
+  background: var(--l-sunken);
+}
+.lab-ep-label {
+  font: 600 11.5px/1 var(--ui);
+  color: var(--l-text-2);
+}
+.lab-ep-group {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--l-border-hi);
+  border-radius: 7px;
+  overflow: hidden;
+  background: var(--l-surface);
+}
+.lab-ep-btn {
+  padding: 6px 13px;
+  border: 0;
+  border-right: 1px solid var(--l-border);
+  background: var(--l-surface);
+  color: var(--l-text-2);
+  font: 600 12px/1.2 var(--ui);
+  cursor: pointer;
+}
+.lab-ep-btn:last-child { border-right: 0; }
+.lab-ep-btn:hover { background: var(--l-sunken); color: var(--l-text); }
+.lab-ep-btn.is-on {
+  background: var(--l-accent);
+  color: #fff;
+}
+.lab-ep-btn:focus-visible { outline: 2px solid var(--l-accent); outline-offset: -2px; }
+.lab.is-busy .lab-ep-btn { opacity: .55; pointer-events: none; }
+
+.lab-ep-note {
+  margin-left: auto;
+  font: 11px/1.3 var(--ui);
+  color: var(--l-text-3);
+  text-align: right;
+}
+
+/* --------------------------------------------------------------- modes --- */
+.lab-modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  padding: 12px 15px 0;
+}
+.lab-mode {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border: 1px solid var(--l-border);
+  border-radius: 7px;
+  background: var(--l-surface);
+  color: var(--l-text);
+  font: 600 12px/1.25 var(--ui);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .12s, background .12s;
+}
+.lab-mode b {
+  font: 500 11px/1 var(--mono);
+  color: var(--l-text-3);
+}
+.lab-mode:hover { border-color: var(--l-border-hi); background: var(--l-sunken); }
+.lab-mode.is-on {
+  border-color: var(--l-accent);
+  background: var(--l-accent-soft);
+  color: #17429b;
+}
+.lab-mode.is-on b { color: var(--l-accent); }
+.lab-mode:focus-visible { outline: 2px solid var(--l-accent); outline-offset: 1px; }
+.lab.is-busy .lab-mode { opacity: .55; pointer-events: none; }
+
+/* Height reserved for the three lines the longer (parameterised) description
+   actually uses, so switching endpoint never reflows the panel. */
+.lab-desc {
+  margin: 10px 15px 0;
+  font: 12px/1.5 var(--ui);
+  color: var(--l-text-2);
+  min-height: 54px;
+}
+
+/* --------------------------------------------------------------- meter --- */
+.lab-meter { padding: 4px 15px 0; }
+
+.lab-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font: 11.5px/1 var(--ui);
+  color: var(--l-text-2);
+}
+.lab-row b {
+  font: 600 11.5px/1 var(--mono);
+  color: var(--l-text);
+  font-variant-numeric: tabular-nums;
+}
+.lab-row label {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+/* Styled to match the rest of the panel; the native arrow was visually
+   louder than any other control here. */
+.lab-row select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 4px 22px 4px 7px;
+  border: 1px solid var(--l-border-hi);
+  border-radius: 5px;
+  background:
+    url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2357606a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    right 7px center / 10px 6px no-repeat,
+    var(--l-surface);
+  color: var(--l-text);
+  font: 11.5px var(--ui);
+  cursor: pointer;
+}
+.lab-row select:hover { border-color: var(--l-text-3); }
+.lab-row select:focus-visible { outline: 2px solid var(--l-accent); outline-offset: 1px; }
+
+.lab-bar {
+  margin-top: 8px;
+  height: 6px;
+  background: var(--l-sunken);
+  border: 1px solid var(--l-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.lab-bar i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--l-accent);
+  transition: width .2s ease;
+}
+.lab-bar.is-done i { background: var(--l-ok); }
+
+/* ------------------------------------------------------------- recovered -- */
+.lab-out { padding: 12px 15px 0; }
+
+.lab-key {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font: 600 11.5px/1.4 var(--ui);
+  color: var(--l-text-2);
+}
+.lab-key code {
+  font: 600 14px/1.4 var(--mono);
+  color: var(--l-text);
+  letter-spacing: .4px;
+  word-break: break-all;
+  padding: 2px 7px;
+  border: 1px solid var(--l-border);
+  border-radius: 5px;
+  background: var(--l-code);
+}
+.lab-key code.is-empty {
+  color: var(--l-text-3);
+  font-weight: 400;
+  letter-spacing: 1.5px;
+}
+.lab-key code.is-found {
+  color: var(--l-ok);
+  border-color: #a7d9b5;
+  background: var(--l-ok-soft);
+}
+
+/* ---------------------------------------------------------- query view --- */
+.lab-sql {
+  margin-top: 7px;
+  padding: 8px 10px;
+  max-height: 86px;
+  overflow: auto;
+  background: var(--l-code);
+  border: 1px solid var(--l-border);
+  border-radius: 6px;
+  font: 11.5px/1.55 var(--mono);
+  color: var(--l-text);
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+.lab-sql .inj {
+  color: var(--l-bad);
+  background: var(--l-bad-soft);
+  border-radius: 3px;
+  padding: 0 2px;
+  font-weight: 700;
+}
+/* On the fixed endpoint the value never enters the SQL text — it is bound. */
+.lab-sql .bound {
+  display: block;
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 1px dashed var(--l-border-hi);
+  color: var(--l-accent);
+}
+.lab-sql .bound b { font-weight: 700; }
+.lab-sql .placeholder { color: var(--l-accent); font-weight: 700; }
+
+/* ----------------------------------------------------------------- log --- */
+/* The only flexible child: it shrinks/grows to fill whatever the fixed
+   sections above leave, and scrolls when there is less than nothing. */
+.lab-log {
+  flex: 1 1 auto;
+  min-height: 120px;
+  margin-top: 12px;
+  padding: 9px 13px 11px;
+  background: var(--l-sunken);
+  border-top: 1px solid var(--l-border);
+  overflow: auto;
+  font: 11.5px/1.65 var(--mono);
+  color: var(--l-text);
+  scrollbar-width: thin;
+  scrollbar-color: var(--l-border-hi) transparent;
+}
+.lab-log::-webkit-scrollbar { width: 9px; }
+.lab-log::-webkit-scrollbar-thumb { background: var(--l-border-hi); border-radius: 5px; }
+
+/* Two-column grid so a wrapped message stays aligned under the message
+   column instead of falling back under the timestamp. */
+.ln {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: 9px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.ts {
+  color: var(--l-text-3);
+  font-variant-numeric: tabular-nums;
+}
+.ln-dim .msg   { color: var(--l-text-2); }
+.ln-ok .msg    { color: var(--l-ok); }
+.ln-bad .msg   { color: var(--l-bad); }
+.ln-warn .msg  { color: var(--l-warn); }
+.ln-info .msg  { color: var(--l-accent); }
+
+/* Run separator: a rule, not a row of box-drawing characters (those wrapped
+   and left a stray fragment on narrow panels). */
+.ln-head {
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px solid var(--l-border-hi);
+}
+.ln-head .msg { color: var(--l-text); font-weight: 700; }
+
+/* --------------------------------------------------------------- foot ---- */
+.lab-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 13px;
+  border-top: 1px solid var(--l-border);
+  background: var(--l-surface);
+}
+.lab-foot button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid var(--l-border-hi);
+  border-radius: 6px;
+  background: var(--l-surface);
+  color: var(--l-text);
+  font: 600 12px/1 var(--ui);
+  cursor: pointer;
+}
+.lab-foot button:hover:not(:disabled) { background: var(--l-sunken); }
+.lab-foot button:disabled { opacity: .45; cursor: not-allowed; }
+.lab-foot button:focus-visible { outline: 2px solid var(--l-accent); outline-offset: 1px; }
+.lab-foot button svg { width: 12px; height: 12px; }
+
+.lab-foot .lab-run {
+  background: var(--l-accent);
+  border-color: var(--l-accent);
+  color: #fff;
+}
+.lab-foot .lab-run:hover:not(:disabled) { background: #1d4fd8; }
+.lab-foot .lab-stop { color: var(--l-bad); border-color: #e6b0b3; }
+.lab-foot .lab-stop:hover:not(:disabled) { background: var(--l-bad-soft); }
+.lab-foot .lab-clear {
+  border-color: transparent;
+  background: transparent;
+  color: var(--l-text-2);
+  font-weight: 500;
+}
+.lab-foot .lab-clear:hover:not(:disabled) { background: var(--l-sunken); border-color: transparent; }
+
+.lab-note {
+  margin-left: auto;
+  font: 11px var(--ui);
+  color: var(--l-text-3);
+}
+
+/* ------------------------------------------------------------ responsive -- */
+@media (max-width: 560px) {
+  .lab { right: 8px; left: 8px; width: auto; bottom: 74px; }
+  .lab-fab { left: 8px; bottom: 12px; }
+  .lab-ep { flex-wrap: wrap; }
+  .lab-ep-note { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab, .lab-fab, .lab-bar i { transition: none; }
+}

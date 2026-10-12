@@ -1,0 +1,19 @@
+{
+  "name": "sql-jissa-sql-injection",
+  "version": "1.0.0",
+  "description": "JISSA · SQL Injection Educational Lab (Simulated Blackboard)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node tests/api.test.js"
+  },
+  "keywords": [
+    "sql-injection",
+    "sqli",
+    "security",
+    "jissa",
+    "blackboard-simulation"
+  ],
+  "author": "Soyaaaa081305",
+  "license": "MIT"
+}
